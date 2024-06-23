@@ -1,4 +1,5 @@
 run:
+	cd website && npm run build
 	cargo watch -x run
 
 install:
