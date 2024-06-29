@@ -77,7 +77,7 @@ const BookingPage = () => {
         console.log('PriceRange:', priceRange);
         console.log('Account Id:', accountID);
         console.log('Train Name or Id:', train);
-        console.log('Status  TrainId:', sTrainID);
+        console.log('Status Train Id:', sTrainID);
 
     };
 
