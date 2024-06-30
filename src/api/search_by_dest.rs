@@ -27,7 +27,7 @@ pub async fn search_by_dest(
         }
     };
     let source_station_name = search_by_dest.source_station;
-    let dest_station_name = search_by_dest.destionation_station;
+    let dest_station_name = search_by_dest.destination_station;
     let source_station_query = format!(
         "SELECT SID, SNAME, SLOCATION FROM STATION WHERE SNAME LIKE '%{}%'",
         source_station_name
