@@ -1,4 +1,4 @@
 {
-    "sourceDestination": "Station3",
-    "finalDestination": "Station2"
+    "sourceStation": "Station3",
+    "destinationStation": "Station2"
 }
