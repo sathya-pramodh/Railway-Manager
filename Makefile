@@ -13,4 +13,4 @@ install:
 	cargo build -r
 
 test:
-	cd scripts && sh test_get_trains.sh
+	cd scripts && sh test_search_by_dest.sh

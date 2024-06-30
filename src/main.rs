@@ -1,4 +1,5 @@
 mod api;
+mod types;
 
 use actix_files as fs;
 use actix_web::{
@@ -6,9 +7,10 @@ use actix_web::{
     web::{self, Data},
     App, HttpRequest, HttpServer, Result,
 };
-use api::get_trains::get_trains;
+use api::search_by_dest::search_by_dest;
 use dotenv::dotenv;
 use mysql::Pool;
+use types::db;
 
 async fn index(_req: HttpRequest) -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open("./website/dist/index.html")?)
@@ -84,7 +86,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(pool.clone()))
-            .service(get_trains)
+            .service(search_by_dest)
             .service(actix_files::Files::new("/", "./website/dist").index_file("index.html"))
             .default_service(web::get().to(index))
             .wrap(Logger::default())
