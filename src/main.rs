@@ -7,7 +7,7 @@ use actix_web::{
     web::{self, Data},
     App, HttpRequest, HttpServer, Result,
 };
-use api::search_by_dest::search_by_dest;
+use api::{search_by_dest::search_by_dest, search_by_price::search_by_price};
 use dotenv::dotenv;
 use mysql::Pool;
 use types::db;
@@ -87,6 +87,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(Data::new(pool.clone()))
             .service(search_by_dest)
+            .service(search_by_price)
             .service(actix_files::Files::new("/", "./website/dist").index_file("index.html"))
             .default_service(web::get().to(index))
             .wrap(Logger::default())

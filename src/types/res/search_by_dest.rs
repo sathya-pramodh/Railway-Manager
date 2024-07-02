@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::db::route::Route;
+use crate::types::db::route::Route;
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]

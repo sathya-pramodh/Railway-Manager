@@ -9,8 +9,8 @@ use mysql::{prelude::Queryable, Pool};
 use crate::{
     db::station::Station,
     types::{
-        db::route::Route, search_by_dest_request::SearchByDestRequest,
-        search_by_dest_response::SearchByDestResponse,
+        db::route::Route, req::search_by_dest::SearchByDestRequest,
+        res::search_by_dest::SearchByDestResponse,
     },
 };
 
@@ -69,7 +69,7 @@ pub async fn search_by_dest(
         Err(err) => {
             let response = format!(
                 "Unable to get source station for sname: '{}': {}",
-                source_station_name, err
+                dest_station_name, err
             );
             eprintln!("{}", response);
             return HttpResponse::BadRequest().body(response);
@@ -78,7 +78,7 @@ pub async fn search_by_dest(
     let dest_station = match dest_stations.first() {
         Some(station) => station,
         None => {
-            let response = format!("No stations found with name: '{}'.", source_station_name);
+            let response = format!("No stations found with name: '{}'.", dest_station_name);
             eprintln!("{}", response);
             return HttpResponse::BadRequest().body(response);
         }

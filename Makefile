@@ -14,3 +14,4 @@ install:
 
 test:
 	cd scripts && sh test_search_by_dest.sh
+	cd scripts && sh test_search_by_price.sh
