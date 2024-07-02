@@ -12,11 +12,11 @@ VALUES
 -- UID, UName, PhNo, Email
 INSERT INTO USER
 VALUES
-    (1, "User1", 1234567890, "user1@gmail.com"),
-    (2, "User2", 1234567891, "user2@gmail.com"),
-    (3, "User3", 1234567892, "user3@gmail.com"),
-    (4, "User4", 1234567893, "user4@gmail.com"),
-    (5, "User5", 1234567894, "user5@gmail.com");
+    (1, "User1", 1234567890, "user1@gmail.com", DEFAULT),
+    (2, "User2", 1234567891, "user2@gmail.com", DEFAULT),
+    (3, "User3", 1234567892, "user3@gmail.com", DEFAULT),
+    (4, "User4", 1234567893, "user4@gmail.com", DEFAULT),
+    (5, "User5", 1234567894, "user5@gmail.com", DEFAULT);
 
 -- TID, SourceSID, DestSID, Capacity, DTime, AddedBy
 INSERT INTO TRAIN
@@ -74,3 +74,12 @@ VALUES
     (18, 5, 3, 600),
     (19, 5, 3, 600),
     (19, 3, 4, 300);
+
+-- UID, PASSWORD_HASH
+INSERT INTO PASSWORDS
+VALUES
+    (1, "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"),
+    (2, "e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446"),
+    (3, "e3c702b7186cec0d9d6cc0d703adeed3873577cc673aec304c72b25af935a170"),
+    (4, "82a3537ff0dbce7eec35d69edc3a189ee6f17d82f353a553f9aa96cb0be3ce89"),
+    (5, "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");

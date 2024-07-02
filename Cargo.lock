@@ -1999,6 +1999,7 @@ dependencies = [
  "env_logger",
  "mysql",
  "serde",
+ "sha2",
 ]
 
 [[package]]

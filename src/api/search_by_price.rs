@@ -22,7 +22,7 @@ pub async fn search_by_price(
         lower_bound, 
         upper_bound
     );
-    let results = match conn.query_map(query, |(tid, total_price): (u64, u64)| {
+    let results = match conn.query_map(query, |(tid, total_price)| {
         TrainPrice { tid, total_price }
     }) {
         Ok(res) => res,
