@@ -29,6 +29,35 @@ pub async fn sign_up(
         None => 0,
     };
     let new_user = sign_up_request.user;
+    let check_query = format!(
+        "SELECT * FROM USER WHERE UName = '{}' AND Email = '{}'",
+        new_user.uname, new_user.email
+    );
+    match conn.query_map(
+        check_query,
+        |(uid, uname, phno, email, _logged_in): (u64, String, u64, String, bool)| User {
+            uid,
+            uname,
+            email,
+            phno,
+        },
+    ) {
+        Ok(users) => {
+            if users.len() != 0 {
+                let response = format!(
+                    "User has already signed up with email: '{}' and name: '{}'",
+                    new_user.email, new_user.uname
+                );
+                eprintln!("{}", response);
+                return HttpResponse::BadRequest().body(response);
+            }
+        }
+        Err(err) => {
+            let response = format!("Unable to check if a user is already in db: {}", err);
+            eprintln!("{}", response);
+            return HttpResponse::InternalServerError().body(response);
+        }
+    };
     let user_query = format!(
         "INSERT INTO USER VALUES ({}, '{}', {}, '{}', 1)",
         last_uid + 1,
