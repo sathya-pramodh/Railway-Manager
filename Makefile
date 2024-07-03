@@ -12,9 +12,14 @@ install:
 	cargo build
 	cargo build -r
 
-test:
+test-searches:
 	cd scripts && sh test_search_by_dest.sh
 	cd scripts && sh test_search_by_price.sh
+
+test-login-logout:
 	cd scripts && sh test_login.sh
 	cd scripts && sh test_sign_up.sh
 	cd scripts && sh test_logout.sh
+
+test-fetches:
+	cd scripts && sh test_get_history.sh

@@ -8,8 +8,8 @@ use actix_web::{
     App, HttpRequest, HttpServer, Result,
 };
 use api::{
-    login::login, logout::logout, search_by_dest::search_by_dest, search_by_price::search_by_price,
-    sign_up::sign_up,
+    get_history::get_history, login::login, logout::logout, search_by_dest::search_by_dest,
+    search_by_price::search_by_price, sign_up::sign_up,
 };
 use dotenv::dotenv;
 use mysql::Pool;
@@ -94,6 +94,7 @@ async fn main() -> std::io::Result<()> {
             .service(login)
             .service(logout)
             .service(sign_up)
+            .service(get_history)
             .service(actix_files::Files::new("/", "./website/dist").index_file("index.html"))
             .default_service(web::get().to(index))
             .wrap(Logger::default())
