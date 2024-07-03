@@ -15,6 +15,7 @@ install:
 test-searches:
 	cd scripts && sh test_search_by_dest.sh
 	cd scripts && sh test_search_by_price.sh
+	cd scripts && sh test_search_by_train_id.sh
 
 test-login-logout:
 	cd scripts && sh test_login.sh

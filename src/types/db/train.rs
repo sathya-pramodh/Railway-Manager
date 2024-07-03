@@ -8,5 +8,4 @@ pub struct Train {
     pub dest_sid: u64,
     pub capacity: u64,
     pub dtime: String,
-    pub added_by: u64,
 }

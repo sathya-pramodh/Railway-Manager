@@ -9,7 +9,7 @@ use actix_web::{
 };
 use api::{
     get_history::get_history, login::login, logout::logout, search_by_dest::search_by_dest,
-    search_by_price::search_by_price, sign_up::sign_up,
+    search_by_price::search_by_price, search_by_train_id::search_by_train_id, sign_up::sign_up,
 };
 use dotenv::dotenv;
 use mysql::Pool;
@@ -91,6 +91,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(pool.clone()))
             .service(search_by_dest)
             .service(search_by_price)
+            .service(search_by_train_id)
             .service(login)
             .service(logout)
             .service(sign_up)
