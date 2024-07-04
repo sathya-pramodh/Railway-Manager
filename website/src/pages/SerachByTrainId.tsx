@@ -6,7 +6,7 @@ interface Train {
     sourceSid: number;
     destSid: number;
     capacity: number;
-    dtime: string; // Adjust according to your actual data structure
+    dtime: string; 
 }
 
 const SearchByTrainId = () => {
@@ -18,10 +18,18 @@ const SearchByTrainId = () => {
             <div className="relative z-10">
                 <TitlePanel />
             </div>
-            <div className="relative z-10 flex items-center justify-center min-h-screen">
-                <div className="w-full max-w-md p-4 bg-black text-white shadow-md rounded-lg text-center">
-                    <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                        <table className="min-w-full bg-gray-800">
+            <div
+                className="absolute inset-0 bg-cover bg-center filter blur-sd"
+                style={{
+                    backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+                }}
+            ></div>
+
+            <div className="relative z-10 flex items-center justify-center min-h-screen py-20">
+                <div className="w-full max-w-3xl p-10 bg-black text-white shadow-md rounded-lg text-center">
+                    <div className="mt-4 p-6 bg-gray-800 rounded-lg">
+                        <h1 className="text-3xl font-bold mb-4">Search By Train</h1>
+                        <table className="min-w-full mt-4 bg-gray-800">
                             <thead>
                                 <tr>
                                     <th className="py-2">Train ID</th>
