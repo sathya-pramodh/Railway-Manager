@@ -14,7 +14,6 @@ const options: OptionType[] = [
     { value: 'Destination', label: 'Destination', description: "Destination" },
     { value: 'Price', label: 'Price', description: 'Price' },
     { value: 'Train', label: 'Train', description: 'Train' },
-    { value: 'Status of The Train', label: 'Status of The Train', description: "Status of The Train" }
 ];
 
 const customStyles: StylesConfig<OptionType, false> = {
@@ -47,7 +46,6 @@ const BookingPage = () => {
     const [finalDestination, setFinalDestination] = useState('');
     const [priceRange, setPriceRange] = useState('');
     const [train, setTrain] = useState('');
-    const [sTrainID, setSTrainID] = useState('');
 
     const navigate = useNavigate();
 
@@ -59,7 +57,6 @@ const BookingPage = () => {
         setFinalDestination('');
         setPriceRange('');
         setTrain('');
-        setSTrainID('');
     };
 
     const handleSubmit = async () => {
@@ -86,33 +83,71 @@ const BookingPage = () => {
                     break;
             }
 
-            navigate('/search-by-price', {
-                state: { priceLowerBound: lowerBound, priceUpperBound: upperBound }
-            });
-        } else if (selectedOption?.value === 'Destination') {
-            navigate('/search-by-dest');
-        } else if (selectedOption?.value === 'Train') {
-            // Handle Train search
             try {
-                const response = await axios.post('/api/searchByTrainId', { tid: sTrainID });
-                navigate('/search_by_train_id', { state: { trains: response.data.trains } });
+                const response = await axios.post('http://localhost:8080/api/searchByPrice', {
+                    priceLowerBound: lowerBound,
+                    priceUpperBound: upperBound,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                navigate('/search-by-price', {
+                    state: {
+                        trains: response.data.trains
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        } else if (selectedOption?.value === 'Destination') {
+            try {
+                const response = await axios.post('http://localhost:8080/api/searchByDest', {
+                    sourceStation: sourceDestination,
+                    destinationStation: finalDestination,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                navigate('/search-by-dest', {
+                    state: {
+                        routes: response.data.routes
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        } else if (selectedOption?.value === 'Train') {
+            try {
+                const response = await axios.post('http://localhost:8080/api/searchByTrainId', {
+                    tid: Number(train)
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                navigate('/search-by-train-id', {
+                    state: {
+                        trains: response.data.trains,
+                    }
+                });
             } catch (error) {
                 console.error('Error fetching data:', error);
-                // Handle error appropriately
             }
         }
     };
 
     return (
         <div className="relative h-screen">
-        <div
-            className="absolute inset-0 bg-cover bg-center filter blur-sd"
-            style={{
-                backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
-            }}
-        ></div>
+            <div
+                className="absolute inset-0 bg-cover bg-center filter blur-sd"
+                style={{
+                    backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+                }}
+            ></div>
             <div className="relative z-10">
-                <TitlePanel title="RailBooking" />
+                <TitlePanel />
             </div>
             <div className="relative z-10 flex items-center justify-center min-h-screen">
                 <div className="w-full max-w-md p-4 bg-black text-white shadow-md rounded-lg text-center">
@@ -185,26 +220,6 @@ const BookingPage = () => {
                                     type="text"
                                     value={train}
                                     onChange={(e) => setTrain(e.target.value)}
-                                    className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
-                                />
-                            </div>
-                            <button
-                                onClick={handleSubmit}
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    )}
-                    {selectedOption && selectedOption.value === 'Status of The Train' && (
-                        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                            <h3 className="text-xl font-semibold">{selectedOption.label}</h3>
-                            <div className="mt-2">
-                                <label className="block text-white">Train Id:</label>
-                                <input
-                                    type="text"
-                                    value={sTrainID}
-                                    onChange={(e) => setSTrainID(e.target.value)}
                                     className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
                                 />
                             </div>

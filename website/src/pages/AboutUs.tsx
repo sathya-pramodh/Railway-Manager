@@ -11,7 +11,7 @@ const AboutUs: React.FC = () => {
                 }}
             ></div>
             <div className="relative z-10">
-                <TitlePanel title="RailBooking" />
+                <TitlePanel />
                 <div className="mt-40 p-4 mx-auto max-w-[calc(100%-4rem)] px-2">
                     <AboutBox />
                 </div>

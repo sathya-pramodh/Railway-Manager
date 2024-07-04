@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
                 }}
             ></div>
             <div className="relative z-10">
-                <TitlePanel title="RailBooking" />
+                <TitlePanel />
                 <div className="mt-40 p-4 mx-auto max-w-[calc(100%-4rem)] px-2">  {/* Center box horizontally, limit width */}
                     <BookingBox text="Get The Best Railway Booking for A Best Prices" />
                 </div>
