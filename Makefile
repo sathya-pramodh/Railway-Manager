@@ -24,3 +24,6 @@ test-login-logout:
 
 test-fetches:
 	cd scripts && sh test_get_history.sh
+
+test-booking:
+	cd scripts && sh test_add_booking.sh

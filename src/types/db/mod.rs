@@ -6,3 +6,4 @@ pub mod station;
 pub mod train;
 pub mod train_price;
 pub mod user;
+pub mod user_booking;

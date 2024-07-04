@@ -1,0 +1,9 @@
+{
+    "booking": {
+        "uid": 1,
+        "tid": 1,
+        "sourceSid": 1,
+        "destSid": 2,
+        "price": 300
+    }
+}

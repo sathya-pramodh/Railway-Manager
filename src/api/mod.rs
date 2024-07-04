@@ -1,3 +1,4 @@
+pub mod add_booking;
 pub mod get_history;
 pub mod login;
 pub mod logout;
