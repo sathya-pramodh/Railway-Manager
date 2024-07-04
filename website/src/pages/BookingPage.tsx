@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Select, { SingleValue, StylesConfig } from 'react-select';
+import { useNavigate } from 'react-router-dom';
 import TitlePanel from "../components/TitlePanel";
+import axios from 'axios'; // Import Axios for API calls
 
 interface OptionType {
     value: string;
@@ -10,10 +12,8 @@ interface OptionType {
 
 const options: OptionType[] = [
     { value: 'Destination', label: 'Destination', description: "Destination" },
-    { value: 'Date/Time', label: 'Date/Time', description: 'Date/Time' },
     { value: 'Price', label: 'Price', description: 'Price' },
     { value: 'Train', label: 'Train', description: 'Train' },
-    { value: 'History of Booking', label: 'History of Booking', description: "History of Booking" },
     { value: 'Status of The Train', label: 'Status of The Train', description: "Status of The Train" }
 ];
 
@@ -45,13 +45,11 @@ const BookingPage = () => {
     const [selectedOption, setSelectedOption] = useState<OptionType | null>(null);
     const [sourceDestination, setSourceDestination] = useState('');
     const [finalDestination, setFinalDestination] = useState('');
-    const [date, setDate] = useState('');
-    const [time, setTime] = useState('');
     const [priceRange, setPriceRange] = useState('');
     const [train, setTrain] = useState('');
-    const [accountID, setAccountID] = useState('');
     const [sTrainID, setSTrainID] = useState('');
 
+    const navigate = useNavigate();
 
     const handleSelectChange = (option: SingleValue<OptionType>) => {
         setSelectedOption(option);
@@ -59,30 +57,60 @@ const BookingPage = () => {
         // Reset input fields when a new option is selected
         setSourceDestination('');
         setFinalDestination('');
-        setDate('');
-        setTime('');
         setPriceRange('');
         setTrain('');
-        setAccountID('');
         setSTrainID('');
     };
 
-    const handleSubmit = () => {
-        // Implement your logic to handle submission of sourceDestination and finalDestination
-        // This function can be expanded based on your application's requirements
-        console.log('Source Destination:', sourceDestination);
-        console.log('Final Destination:', finalDestination);
-        console.log('Date:', date);
-        console.log('Time:', time);
-        console.log('PriceRange:', priceRange);
-        console.log('Account Id:', accountID);
-        console.log('Train Name or Id:', train);
-        console.log('Status Train Id:', sTrainID);
+    const handleSubmit = async () => {
+        if (selectedOption?.value === 'Price') {
+            let lowerBound = 0;
+            let upperBound = 1000;
 
+            switch (priceRange) {
+                case '<1000':
+                    lowerBound = 0;
+                    upperBound = 1000;
+                    break;
+                case '1000-2500':
+                    lowerBound = 1000;
+                    upperBound = 2500;
+                    break;
+                case '2500-5000':
+                    lowerBound = 2500;
+                    upperBound = 5000;
+                    break;
+                case '>5000':
+                    lowerBound = 5000;
+                    upperBound = Infinity;
+                    break;
+            }
+
+            navigate('/search-by-price', {
+                state: { priceLowerBound: lowerBound, priceUpperBound: upperBound }
+            });
+        } else if (selectedOption?.value === 'Destination') {
+            navigate('/search-by-dest');
+        } else if (selectedOption?.value === 'Train') {
+            // Handle Train search
+            try {
+                const response = await axios.post('/api/searchByTrainId', { tid: sTrainID });
+                navigate('/search_by_train_id', { state: { trains: response.data.trains } });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Handle error appropriately
+            }
+        }
     };
 
     return (
-        <>
+        <div className="relative h-screen">
+        <div
+            className="absolute inset-0 bg-cover bg-center filter blur-sd"
+            style={{
+                backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+            }}
+        ></div>
             <div className="relative z-10">
                 <TitlePanel title="RailBooking" />
             </div>
@@ -125,38 +153,8 @@ const BookingPage = () => {
                             </button>
                         </div>
                     )}
-                    {selectedOption && selectedOption.value === 'Date/Time' && (
-                        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                            <h3 className="text-xl font-semibold">{selectedOption.label}</h3>
-                            <div className="mt-2">
-                                <label className="block text-white">Date:</label>
-                                <input
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                    className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
-                                />
-                            </div>
-                            <div className="mt-2">
-                                <label className="block text-white">Time in 24hrs format:</label>
-                                <input
-                                    type="time"
-                                    value={time}
-                                    onChange={(e) => setTime(e.target.value)}
-                                    className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
-                                />
-                            </div>
-                            <button
-                                onClick={handleSubmit}
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    )}
                     {selectedOption && selectedOption.value === 'Price' && (
                         <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-
                             <div className="mt-2">
                                 <label className="block text-white">Price Range:</label>
                                 <select
@@ -198,33 +196,13 @@ const BookingPage = () => {
                             </button>
                         </div>
                     )}
-                    {selectedOption && selectedOption.value === 'History of Booking' && (
-                        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                            <h3 className="text-xl font-semibold">{selectedOption.label}</h3>
-                            <div className="mt-2">
-                                <label className="block text-white">Enter the AccountID:</label>
-                                <input
-                                    type="text"
-                                    value={accountID}
-                                    onChange={(e) => setAccountID(e.target.value)}
-                                    className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
-                                />
-                            </div>
-                            <button
-                                onClick={handleSubmit}
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    )}
                     {selectedOption && selectedOption.value === 'Status of The Train' && (
                         <div className="mt-4 p-4 bg-gray-800 rounded-lg">
                             <h3 className="text-xl font-semibold">{selectedOption.label}</h3>
                             <div className="mt-2">
-                                <label className="block text-white">Enter the TrainId:</label>
+                                <label className="block text-white">Train Id:</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={sTrainID}
                                     onChange={(e) => setSTrainID(e.target.value)}
                                     className="block w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring"
@@ -238,14 +216,9 @@ const BookingPage = () => {
                             </button>
                         </div>
                     )}
-
                 </div>
             </div>
-            <div className="absolute inset-0 bg-cover bg-center filter blur-sd" style={{
-                backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
-            }}>
-            </div>
-        </>
+        </div>
     );
 };
 
