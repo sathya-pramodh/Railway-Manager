@@ -7,6 +7,7 @@ import SearchByPrice from './pages/SearchByPrice';
 import SearchByTrainId from './pages/SearchByTrainId';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import UserPage from './pages/UserPage';
 
 const App = () => {
     return (
@@ -18,6 +19,7 @@ const App = () => {
                 <Route path="/search-by-dest" element={<ProtectedRoute element={<SearchByDest />} />} />
                 <Route path="/search-by-price" element={<ProtectedRoute element={<SearchByPrice />} />} />
                 <Route path="/search-by-trainid" element={<ProtectedRoute element={<SearchByTrainId />} />} />
+                <Route path="/user" element={<ProtectedRoute element={<UserPage />} />} />
                 <Route path="/" element={<LoginPage />} />
             </Routes>
         </BrowserRouter>

@@ -1,7 +1,7 @@
-import { FaUserCircle } from "react-icons/fa";
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import TitlePanel from "../components/TitlePanel";
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -19,13 +19,13 @@ const LoginPage = () => {
 
             if (response.status === 200) {
                 localStorage.setItem('isAuthenticated', 'true'); // Store flag in local storage
+                localStorage.setItem('uid', response.data.user.uid);
                 navigate('/home');
             } else {
                 alert('Invalid credentials');
                 navigate('/');
             }
         } catch (error) {
-            console.error('Login error:', error);
             alert('Invalid credentials');
             navigate('/');
         }
@@ -33,23 +33,8 @@ const LoginPage = () => {
 
     return (
         <>
-            <div className="bg-black p-3 text-white flex items-center justify-between relative z-10">
-                <h1 className="text-lg">RailBooking</h1>
-                <nav>
-                    <ul className="flex space-x-6">
-                        <li><Link to="/home" className="hover:text-gray-300">Home</Link></li>
-                        <li>
-                            <Link to="/" className="hover:text-gray-300">
-                                About Us
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/" className="hover:text-gray-300 flex items-center">
-                                <FaUserCircle className="mr-1" /> Account
-                            </Link>
-                        </li>
-                    </ul>
-                </nav>
+            <div className="relative z-10">
+                <TitlePanel />
             </div>
             <div
                 className="absolute inset-0 bg-cover bg-center filter blur-sd"
@@ -62,11 +47,11 @@ const LoginPage = () => {
                     <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="t mb-4">
-                            <label htmlFor="username" className="block text-left text-white-700">Username</label>
+                            <label htmlFor="username" className="block text-left text-white-700">Email</label>
                             <input
                                 type="text"
                                 id="username"
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                                className="w-full px-3 py-2 border text-black rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
@@ -77,7 +62,7 @@ const LoginPage = () => {
                             <input
                                 type="password"
                                 id="password"
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                                className="w-full px-3 py-2 border text-black rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
