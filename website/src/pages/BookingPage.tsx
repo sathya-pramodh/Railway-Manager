@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Select, { SingleValue, StylesConfig } from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import TitlePanel from "../components/TitlePanel";
-import axios from 'axios'; // Import Axios for API calls
+import axios from 'axios';
 
 interface OptionType {
     value: string;
@@ -33,7 +33,7 @@ const customStyles: StylesConfig<OptionType, false> = {
         ...provided,
         color: 'white'
     }),
-    option: (provided, state: { isFocused: boolean; }) => ({
+    option: (provided, state) => ({
         ...provided,
         backgroundColor: state.isFocused ? 'grey' : 'black',
         color: 'white'
@@ -51,8 +51,6 @@ const BookingPage = () => {
 
     const handleSelectChange = (option: SingleValue<OptionType>) => {
         setSelectedOption(option);
-
-        // Reset input fields when a new option is selected
         setSourceDestination('');
         setFinalDestination('');
         setPriceRange('');
@@ -127,7 +125,7 @@ const BookingPage = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                navigate('/search-by-train-id', {
+                navigate('/search-by-trainid', {
                     state: {
                         trains: response.data.trains,
                     }
@@ -156,7 +154,7 @@ const BookingPage = () => {
                         options={options}
                         onChange={handleSelectChange}
                         placeholder="Select an option"
-                        styles={customStyles} // Apply custom styles
+                        styles={customStyles}
                         className="react-select mt-4"
                     />
                     {selectedOption && selectedOption.value === 'Destination' && (
