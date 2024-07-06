@@ -1,7 +1,7 @@
 use actix_web::{post, web, HttpResponse};
 use mysql::{prelude::Queryable, Pool};
 
-use crate::types::{db::train_price::TrainPrice, req::search_by_price::SearchByPriceRequest, res::search_by_price::SearchByPriceResponse};
+use crate::types::{ db::{train::Train, train_price::{FullTrainPrice, TrainPrice}}, req::search_by_price::SearchByPriceRequest, res::search_by_price::SearchByPriceResponse};
 
 #[post("/api/searchByPrice")]
 pub async fn search_by_price(
@@ -32,6 +32,30 @@ pub async fn search_by_price(
             return HttpResponse::NotFound().body(response);
         }
     };
-    let response = SearchByPriceResponse { trains: results };
+    let mut final_results: Vec<FullTrainPrice> = vec![];
+    for result in results {
+        let train_detail_query = format!("SELECT TID, SourceSID, DestSID, Capacity, DTime FROM TRAIN WHERE TID = {}", result.tid);
+        let final_result = match conn.query_map(train_detail_query, |(tid, source_sid, dest_sid, capacity, dtime)| {
+            let train = Train { tid, source_sid, dest_sid, capacity, dtime };
+            FullTrainPrice { train, total_price: result.total_price}
+        }) {
+            Ok(result) => result,
+            Err(err) => {
+                let response = format!("Unable to get train details for tid: {} : {}", result.tid, err);
+                eprintln!("{}", response);
+                return HttpResponse::NotFound().body(response);
+            }
+        };
+        let final_result = match final_result.first() {
+            Some(result) => result,
+            None => {
+                let response = format!("No matching train details for tid: {}.", result.tid);
+                eprintln!("{}", response);
+                return HttpResponse::NotFound().body(response);
+            }
+        };
+        final_results.push(final_result.copy());
+    }
+    let response = SearchByPriceResponse { trains: final_results };
     HttpResponse::Ok().json(response)
 }

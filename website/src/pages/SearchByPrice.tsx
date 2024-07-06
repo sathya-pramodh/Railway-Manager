@@ -1,6 +1,11 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from "react-router";
 import TitlePanel from "../components/TitlePanel";
+
+interface FullTrainPrice {
+    train: Train,
+    totalPrice: number,
+}
 
 interface Train {
     tid: number;
@@ -8,7 +13,6 @@ interface Train {
     destSID: string;
     capacity: number;
     dtime: string;
-    totalPrice: number; // Use totalPrice if this is the field from the API
 }
 
 const SearchByPrice = () => {
@@ -28,7 +32,7 @@ const SearchByPrice = () => {
 
     const handleSubmit = () => {
         if (selectedTrain !== null) {
-            const train = trains.find((t: Train) => t.tid === selectedTrain);
+            const train: FullTrainPrice = trains.find((t: FullTrainPrice) => t.train.tid === selectedTrain);
             const quantity = quantities[selectedTrain] || 1;
             const totalPrice = train.totalPrice * quantity;
             alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
@@ -56,27 +60,27 @@ const SearchByPrice = () => {
                             <p className="text-white">No trains found for the given price range.</p>
                         ) : (
                             <ul className="divide-y divide-gray-700">
-                                {trains.map((train: Train) => {
-                                    const quantity = quantities[train.tid] || 1;
+                                {trains.map((train: FullTrainPrice) => {
+                                    const quantity = quantities[train.train.tid] || 1;
                                     const totalPrice = train.totalPrice * quantity;
                                     return (
-                                        <li key={train.tid} className="py-2 flex justify-between items-center">
+                                        <li key={train.train.tid} className="py-2 flex justify-between items-center">
                                             <div>
                                                 <input
                                                     type="checkbox"
-                                                    checked={selectedTrain === train.tid}
-                                                    onChange={() => handleCheckboxChange(train.tid)}
+                                                    checked={selectedTrain === train.train.tid}
+                                                    onChange={() => handleCheckboxChange(train.train.tid)}
                                                     className="mr-2"
                                                 />
-                                                <span className="text-white">Train ID: {train.tid}, Source: {train.sourceSID}, Destination: {train.destSID}</span>
-                                                <p className="text-gray-400">Capacity: {train.capacity}, Departure Time: {train.dtime}</p>
+                                                <span className="text-white">Train ID: {train.train.tid}, Source: {train.train.sourceSID}, Destination: {train.train.destSID}</span>
+                                                <p className="text-gray-400">Capacity: {train.train.capacity}, Departure Time: {train.train.dtime}</p>
                                             </div>
                                             <div className="flex items-center">
                                                 <span className="text-white mr-2">${totalPrice}</span>
                                                 <select
                                                     className="bg-gray-800 text-white"
                                                     value={quantity}
-                                                    onChange={(e) => handleDropdownChange(train.tid, parseInt(e.target.value))}
+                                                    onChange={(e) => handleDropdownChange(train.train.tid, parseInt(e.target.value))}
                                                 >
                                                     {[1, 2, 3, 4, 5].map((num) => (
                                                         <option key={num} value={num}>

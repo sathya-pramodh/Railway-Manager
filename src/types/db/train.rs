@@ -9,3 +9,12 @@ pub struct Train {
     pub capacity: u64,
     pub dtime: String,
 }
+
+impl Train {
+    pub fn copy(&self) -> Self {
+        Self {
+            dtime: self.dtime.to_owned(),
+            ..*self
+        }
+    }
+}
