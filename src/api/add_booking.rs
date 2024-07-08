@@ -34,7 +34,7 @@ pub async fn add_booking(
     let query = format!(
         "INSERT INTO BOOKING VALUES ({}, {}, {}, {}, {}, {}, {})",
         last_bid + 1,
-        booking.tid,
+        booking.uid,
         booking.tid,
         booking.source_sid,
         booking.dest_sid,
