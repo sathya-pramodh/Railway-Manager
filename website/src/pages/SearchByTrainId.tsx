@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import TitlePanel from '../components/TitlePanel';
+import axios, { HttpStatusCode } from 'axios';
 
 interface Train {
     tid: number;
@@ -8,12 +9,17 @@ interface Train {
     destSid: number;
     capacity: number;
     dtime: string;
-    price: number;  // Added price field
+}
+
+interface FullTrainPrice {
+    train: Train,
+    totalPrice: number,
 }
 
 const SearchByTrainId = () => {
     const location = useLocation();
-    const { trains } = location.state;
+    const navigate = useNavigate();
+    const { trains } = location.state as { trains: Array<FullTrainPrice> };
 
     const [selectedTrain, setSelectedTrain] = useState<number | null>(null);
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
@@ -26,12 +32,34 @@ const SearchByTrainId = () => {
         setQuantities((prev) => ({ ...prev, [tid]: value }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (selectedTrain !== null) {
-            const train = trains.find((t: Train) => t.tid === selectedTrain);
+            const train = trains.find((t: FullTrainPrice) => t.train.tid === selectedTrain)!;
             const quantity = quantities[selectedTrain] || 1;
-            const totalPrice = train.price * quantity;
-            alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+            const totalPrice = train!.totalPrice * quantity;
+            try {
+                const response = await axios.post("/api/addBooking", {
+                    booking: {
+                        uid: Number.parseInt(localStorage.getItem('uid')!),
+                        tid: train.train.tid,
+                        sourceSid: train.train.sourceSid,
+                        destSid: train.train.destSid,
+                        price: train.totalPrice,
+                    }
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                if (response.status == HttpStatusCode.Ok) {
+                    alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}. Added Booking!`);
+                    navigate("/user"); // Redirect to UserPage to see updated bookings
+                }
+            } catch (e) {
+                alert("Error while sending booking request, Try again!")
+                console.log(e)
+                window.location.reload();
+            }
         } else {
             alert("Please select a train.");
         }
@@ -67,29 +95,29 @@ const SearchByTrainId = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {trains.map((train: Train, index: number) => {
-                                    const quantity = quantities[train.tid] || 1;
-                                    const totalPrice = train.price * quantity;
+                                {trains.map((train: FullTrainPrice, index: number) => {
+                                    const quantity = quantities[train.train.tid] || 1;
+                                    const totalPrice = train.totalPrice * quantity;
                                     return (
                                         <tr key={index} className="bg-gray-700">
                                             <td className="py-2">
                                                 <input
                                                     type="checkbox"
-                                                    checked={selectedTrain === train.tid}
-                                                    onChange={() => handleCheckboxChange(train.tid)}
+                                                    checked={selectedTrain === train.train.tid}
+                                                    onChange={() => handleCheckboxChange(train.train.tid)}
                                                 />
                                             </td>
-                                            <td className="py-2">{train.tid}</td>
-                                            <td className="py-2">{train.sourceSid}</td>
-                                            <td className="py-2">{train.destSid}</td>
-                                            <td className="py-2">{train.capacity}</td>
-                                            <td className="py-2">{train.dtime}</td>
+                                            <td className="py-2">{train.train.tid}</td>
+                                            <td className="py-2">{train.train.sourceSid}</td>
+                                            <td className="py-2">{train.train.destSid}</td>
+                                            <td className="py-2">{train.train.capacity}</td>
+                                            <td className="py-2">{train.train.dtime}</td>
                                             <td className="py-2">{totalPrice}</td>
                                             <td className="py-2">
                                                 <select
                                                     className="bg-gray-800 text-white"
                                                     value={quantity}
-                                                    onChange={(e) => handleDropdownChange(train.tid, parseInt(e.target.value))}
+                                                    onChange={(e) => handleDropdownChange(train.train.tid, parseInt(e.target.value))}
                                                 >
                                                     {[1, 2, 3, 4, 5].map((num) => (
                                                         <option key={num} value={num}>

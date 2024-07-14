@@ -2,7 +2,8 @@ use actix_web::{post, web, HttpResponse};
 use mysql::{prelude::Queryable, Pool};
 
 use crate::types::{
-    db::train::Train, req::search_by_train_id::SearchByTrainIdRequest,
+    db::{train::Train, train_price::FullTrainPrice},
+    req::search_by_train_id::SearchByTrainIdRequest,
     res::search_by_train_id::SearchByTrainIdResponse,
 };
 
@@ -39,6 +40,34 @@ pub async fn search_by_train_id(
             return HttpResponse::BadRequest().body(response);
         }
     };
+    let price_query = format!(
+        "SELECT SUM(Price) AS TotalPrice FROM ROUTE WHERE TID = {}",
+        tid
+    );
+    let result = match conn.query_map(price_query, |total_price| {
+        for train in trains.iter() {
+            if train.tid == tid {
+                return Some(FullTrainPrice {
+                    total_price,
+                    train: train.copy(),
+                });
+            }
+        }
+        None
+    }) {
+        Ok(result) => result,
+        Err(err) => {
+            let response = format!("Unable to get prices for tid: {} : {}", tid, err);
+            eprintln!("{}", response);
+            return HttpResponse::BadRequest().body(response);
+        }
+    };
+    let mut trains = vec![];
+    for train in result {
+        if train.is_some() {
+            trains.push(train.unwrap());
+        }
+    }
     let response = SearchByTrainIdResponse { trains };
     HttpResponse::Ok().json(response)
 }

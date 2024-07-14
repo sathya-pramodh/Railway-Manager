@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import TitlePanel from '../components/TitlePanel';
+import axios, { HttpStatusCode } from 'axios';
 
 interface FullTrainPrice {
     train: Train;
@@ -9,13 +10,14 @@ interface FullTrainPrice {
 
 interface Train {
     tid: number;
-    sourceSID: string;
-    destSID: string;
+    sourceSid: string;
+    destSid: string;
     capacity: number;
     dtime: string;
 }
 
 const SearchByPrice = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const { trains } = location.state as { trains: FullTrainPrice[] };
 
@@ -30,13 +32,38 @@ const SearchByPrice = () => {
         setQuantities((prev) => ({ ...prev, [tid]: value }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (selectedTrain !== null) {
             const train = trains.find((t) => t.train.tid === selectedTrain);
             if (train) {
                 const quantity = quantities[selectedTrain] || 1;
                 const totalPrice = train.totalPrice * quantity;
-                alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+                try {
+                    const response = await axios.post("/api/addBooking", {
+                        booking: {
+                            uid: Number.parseInt(localStorage.getItem('uid')!),
+                            tid: train.train.tid,
+                            sourceSid: train.train.sourceSid,
+                            destSid: train.train.destSid,
+                            price: totalPrice,
+                        }
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    if (response.status == HttpStatusCode.Ok) {
+                        alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}. Added Booking!`);
+                        navigate("/user"); // Redirect to UserPage to see updated bookings
+                    } else {
+                        alert(`Failed to book the route. Please try again. Server response: ${response.statusText}`);
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    alert("Error while sending booking request, Try again!")
+                    console.log(e)
+                    // window.location.reload()
+                }
             }
         } else {
             alert('Please select a train.');
@@ -75,7 +102,7 @@ const SearchByPrice = () => {
                                                     className="mr-2"
                                                 />
                                                 <span className="text-white">
-                                                    Train ID: {train.train.tid}, Source: {train.train.sourceSID}, Destination: {train.train.destSID}
+                                                    Train ID: {train.train.tid}, Source: {train.train.sourceSid}, Destination: {train.train.destSid}
                                                 </span>
                                                 <p className="text-gray-400">
                                                     Capacity: {train.train.capacity}, Departure Time: {train.train.dtime}

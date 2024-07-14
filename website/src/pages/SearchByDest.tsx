@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import TitlePanel from "../components/TitlePanel";
+import axios, { HttpStatusCode } from "axios";
 
 interface Route {
     tid: number;
@@ -12,7 +13,7 @@ interface Route {
 const SearchByDest = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { routes } = location.state;
+    const { routes } = location.state as { routes: Route[] };
 
     const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
@@ -27,44 +28,37 @@ const SearchByDest = () => {
 
     const handleSubmit = async () => {
         if (selectedRoute !== null) {
-            const route = routes.find((r: Route) => r.tid === selectedRoute);
+            const route = routes.find((r: Route) => r.tid === selectedRoute)!;
             const quantity = quantities[selectedRoute] || 1;
             const totalPrice = route.price * quantity;
 
-            const bookingData = {
-                uid: 1, // Replace with actual user ID
-                tid: route.tid,
-                sourceSid: route.sourceSid,
-                destSid: route.destSid,
-                price: totalPrice,
-            };
-
-            console.log("Booking Data:", bookingData); // Debugging log
-
             try {
-                const response = await fetch("/api/addBooking", {
-                    method: "POST",
+                const response = await axios.post("/api/addBooking", {
+                    booking: {
+                        uid: Number.parseInt(localStorage.getItem('uid')!),
+                        tid: route.tid,
+                        sourceSid: route.sourceSid,
+                        destSid: route.destSid,
+                        price: totalPrice,
+                    }
+                }, {
                     headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ booking: bookingData }), // Ensure the JSON matches the expected structure
-                });
-
-                const responseData = await response.text();
-                console.log("Response Data:", responseData); // Debugging log
-
-                if (response.ok) {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                if (response.status == HttpStatusCode.Ok) {
                     alert(`Route ID: ${selectedRoute}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
                     navigate("/user"); // Redirect to UserPage to see updated bookings
                 } else {
-                    alert(`Failed to book the route. Please try again. Server response: ${responseData}`);
+                    alert(`Failed to book the route. Please try again. Server response: ${response.statusText}`);
                     window.location.reload();
                 }
-            } catch (error) {
-                console.error("Error:", error); // Debugging log
-                alert("An error occurred. Please try again.");
-                window.location.reload();
+            } catch (e) {
+                alert("Error while sending booking request, Try again!")
+                console.log(e)
+                window.location.reload()
             }
+
         } else {
             alert("Please select a route.");
         }
