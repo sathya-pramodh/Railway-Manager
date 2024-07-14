@@ -62,7 +62,7 @@ const SearchByPrice = () => {
                 } catch (e) {
                     alert("Error while sending booking request, Try again!")
                     console.log(e)
-                    // window.location.reload()
+                    window.location.reload()
                 }
             }
         } else {
