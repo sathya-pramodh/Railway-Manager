@@ -45,7 +45,7 @@ const SearchByTrainId = () => {
             <div
                 className="absolute inset-0 bg-cover bg-center filter blur-sd"
                 style={{
-                    backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+                    backgroundImage: "url('https://wallpaper.forfun.com/fetch/d9/d9acf7600af70619b5fe352bc175f404.jpeg')"
                 }}
             ></div>
 

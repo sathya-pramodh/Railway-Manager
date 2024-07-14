@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useLocation } from "react-router";
-import TitlePanel from "../components/TitlePanel";
+import { useLocation } from 'react-router';
+import TitlePanel from '../components/TitlePanel';
 
 interface FullTrainPrice {
-    train: Train,
-    totalPrice: number,
+    train: Train;
+    totalPrice: number;
 }
 
 interface Train {
@@ -17,7 +17,7 @@ interface Train {
 
 const SearchByPrice = () => {
     const location = useLocation();
-    const { trains } = location.state;
+    const { trains } = location.state as { trains: FullTrainPrice[] };
 
     const [selectedTrain, setSelectedTrain] = useState<number | null>(null);
     const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
@@ -32,12 +32,14 @@ const SearchByPrice = () => {
 
     const handleSubmit = () => {
         if (selectedTrain !== null) {
-            const train: FullTrainPrice = trains.find((t: FullTrainPrice) => t.train.tid === selectedTrain);
-            const quantity = quantities[selectedTrain] || 1;
-            const totalPrice = train.totalPrice * quantity;
-            alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+            const train = trains.find((t) => t.train.tid === selectedTrain);
+            if (train) {
+                const quantity = quantities[selectedTrain] || 1;
+                const totalPrice = train.totalPrice * quantity;
+                alert(`Train ID: ${selectedTrain}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+            }
         } else {
-            alert("Please select a train.");
+            alert('Please select a train.');
         }
     };
 
@@ -47,9 +49,9 @@ const SearchByPrice = () => {
                 <TitlePanel />
             </div>
             <div
-                className="absolute inset-0 bg-cover bg-center filter blur-sd"
+                className="absolute inset-0 bg-cover bg-center filter blur-sm"
                 style={{
-                    backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+                    backgroundImage: "url('https://wallpaper.forfun.com/fetch/d9/d9acf7600af70619b5fe352bc175f404.jpeg')",
                 }}
             ></div>
             <div className="relative z-10 flex items-center justify-center min-h-screen py-20">
@@ -60,7 +62,7 @@ const SearchByPrice = () => {
                             <p className="text-white">No trains found for the given price range.</p>
                         ) : (
                             <ul className="divide-y divide-gray-700">
-                                {trains.map((train: FullTrainPrice) => {
+                                {trains.map((train) => {
                                     const quantity = quantities[train.train.tid] || 1;
                                     const totalPrice = train.totalPrice * quantity;
                                     return (
@@ -72,8 +74,12 @@ const SearchByPrice = () => {
                                                     onChange={() => handleCheckboxChange(train.train.tid)}
                                                     className="mr-2"
                                                 />
-                                                <span className="text-white">Train ID: {train.train.tid}, Source: {train.train.sourceSID}, Destination: {train.train.destSID}</span>
-                                                <p className="text-gray-400">Capacity: {train.train.capacity}, Departure Time: {train.train.dtime}</p>
+                                                <span className="text-white">
+                                                    Train ID: {train.train.tid}, Source: {train.train.sourceSID}, Destination: {train.train.destSID}
+                                                </span>
+                                                <p className="text-gray-400">
+                                                    Capacity: {train.train.capacity}, Departure Time: {train.train.dtime}
+                                                </p>
                                             </div>
                                             <div className="flex items-center">
                                                 <span className="text-white mr-2">${totalPrice}</span>
@@ -94,10 +100,7 @@ const SearchByPrice = () => {
                                 })}
                             </ul>
                         )}
-                        <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                            onClick={handleSubmit}
-                        >
+                        <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={handleSubmit}>
                             Submit
                         </button>
                     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import TitlePanel from "../components/TitlePanel";
 
 interface Route {
@@ -11,6 +11,7 @@ interface Route {
 
 const SearchByDest = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { routes } = location.state;
 
     const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
@@ -24,12 +25,46 @@ const SearchByDest = () => {
         setQuantities((prev) => ({ ...prev, [tid]: value }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (selectedRoute !== null) {
             const route = routes.find((r: Route) => r.tid === selectedRoute);
             const quantity = quantities[selectedRoute] || 1;
             const totalPrice = route.price * quantity;
-            alert(`Route ID: ${selectedRoute}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+
+            const bookingData = {
+                uid: 1, // Replace with actual user ID
+                tid: route.tid,
+                sourceSid: route.sourceSid,
+                destSid: route.destSid,
+                price: totalPrice,
+            };
+
+            console.log("Booking Data:", bookingData); // Debugging log
+
+            try {
+                const response = await fetch("/api/addBooking", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ booking: bookingData }), // Ensure the JSON matches the expected structure
+                });
+
+                const responseData = await response.text();
+                console.log("Response Data:", responseData); // Debugging log
+
+                if (response.ok) {
+                    alert(`Route ID: ${selectedRoute}, Quantity: ${quantity}, Total Price: ${totalPrice}`);
+                    navigate("/user"); // Redirect to UserPage to see updated bookings
+                } else {
+                    alert(`Failed to book the route. Please try again. Server response: ${responseData}`);
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error("Error:", error); // Debugging log
+                alert("An error occurred. Please try again.");
+                window.location.reload();
+            }
         } else {
             alert("Please select a route.");
         }
@@ -43,7 +78,7 @@ const SearchByDest = () => {
             <div
                 className="absolute inset-0 bg-cover bg-center filter blur-sd"
                 style={{
-                    backgroundImage: "url('https://www.tamilnadutourism.tn.gov.in/img/pages/medium-desktop/take-a-ride-in-the-toy-train-1653978188_8ac904b5bdb228abad78.webp')"
+                    backgroundImage: "url('https://wallpaper.forfun.com/fetch/d9/d9acf7600af70619b5fe352bc175f404.jpeg')"
                 }}
             ></div>
             <div className="relative z-10 flex items-center justify-center min-h-screen py-20">
