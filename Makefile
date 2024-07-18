@@ -27,3 +27,4 @@ test-fetches:
 
 test-booking:
 	cd scripts && sh test_add_booking.sh
+	cd scripts && sh test_remove_booking.sh
