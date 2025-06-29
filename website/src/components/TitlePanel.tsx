@@ -9,7 +9,7 @@ const TitlePanel = () => {
     function handleSignOut() {
         localStorage.setItem('isAuthenticated', 'false');
         const uid = localStorage.getItem('uid');
-        axios.post("http://localhost:8080/api/logout", {
+        axios.post("http://18.234.100.5:8081/api/logout", {
             uid: Number(uid)
         }).then((response) => {
             if (response.status == 200) {

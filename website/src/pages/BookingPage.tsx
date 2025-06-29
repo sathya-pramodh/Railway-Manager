@@ -82,7 +82,7 @@ const BookingPage = () => {
             }
 
             try {
-                const response = await axios.post('http://localhost:8080/api/searchByPrice', {
+                const response = await axios.post('http://18.234.100.5:8081/api/searchByPrice', {
                     priceLowerBound: lowerBound,
                     priceUpperBound: upperBound,
                 }, {
@@ -100,7 +100,7 @@ const BookingPage = () => {
             }
         } else if (selectedOption?.value === 'Destination') {
             try {
-                const response = await axios.post('http://localhost:8080/api/searchByDest', {
+                const response = await axios.post('http://18.234.100.5:8081/api/searchByDest', {
                     sourceStation: sourceDestination,
                     destinationStation: finalDestination,
                 }, {
@@ -118,7 +118,7 @@ const BookingPage = () => {
             }
         } else if (selectedOption?.value === 'Train') {
             try {
-                const response = await axios.post('http://localhost:8080/api/searchByTrainId', {
+                const response = await axios.post('http://18.234.100.5:8081/api/searchByTrainId', {
                     tid: Number(train)
                 }, {
                     headers: {

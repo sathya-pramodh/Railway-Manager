@@ -10,7 +10,9 @@ use actix_web::{
     App, HttpRequest, HttpServer, Result,
 };
 use api::{
-    add_booking::add_booking, get_history::get_history, login::login, logout::logout, remove_booking::remove_booking, search_by_dest::search_by_dest, search_by_price::search_by_price, search_by_train_id::search_by_train_id, sign_up::sign_up
+    add_booking::add_booking, get_history::get_history, login::login, logout::logout,
+    remove_booking::remove_booking, search_by_dest::search_by_dest,
+    search_by_price::search_by_price, search_by_train_id::search_by_train_id, sign_up::sign_up,
 };
 use dotenv::dotenv;
 use mysql::Pool;
@@ -115,4 +117,3 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
-
