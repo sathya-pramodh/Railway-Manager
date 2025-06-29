@@ -3,12 +3,7 @@ mod types;
 
 use std::path::Path;
 
-use actix_files as fs;
-use actix_web::{
-    middleware::Logger,
-    web::{self, Data},
-    App, HttpRequest, HttpServer, Result,
-};
+use actix_web::{middleware::Logger, web::Data, App, HttpServer};
 use api::{
     add_booking::add_booking, get_history::get_history, login::login, logout::logout,
     remove_booking::remove_booking, search_by_dest::search_by_dest,
@@ -17,15 +12,6 @@ use api::{
 use dotenv::dotenv;
 use mysql::Pool;
 use types::db;
-
-async fn index(_req: HttpRequest) -> Result<fs::NamedFile> {
-    Ok(fs::NamedFile::open(
-        Path::new(".")
-            .join("website")
-            .join("dist")
-            .join("index.html"),
-    )?)
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -110,7 +96,6 @@ async fn main() -> std::io::Result<()> {
                 actix_files::Files::new("/", Path::new(".").join("website").join("dist"))
                     .index_file("index.html"),
             )
-            .default_service(web::get().to(index))
             .wrap(Logger::default())
     })
     .bind((srv_host, port))?
